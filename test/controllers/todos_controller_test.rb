@@ -1,24 +1,30 @@
-require "test_helper"
+require 'rails_helper'
 
-class TodosControllerTest < ActionDispatch::IntegrationTest
-  test "should get index" do
-    get todos_url
-    assert_response :success
-    assert_not_nil assigns(:todos)
+RSpec.describe TodosController, type: :controller do
+  describe "GET #index" do
+    it "returns a success response" do
+      get :index
+      expect(response).to be_successful
+      expect(assigns(:todos)).not_to be_nil
+    end
   end
 
-  test "should create todo" do
-    assert_difference('Todo.count') do
-      post todos_url, params: { todo: { description: 'Test todo' } }
+  describe "POST #create" do
+    it "creates a new Todo" do
+      expect {
+        post :create, params: { todo: { description: 'Test todo' } }
+      }.to change(Todo, :count).by(1)
+      expect(response).to redirect_to(todos_path)
     end
-    assert_redirected_to todos_url
   end
 
-  test "should destroy todo" do
-    todo = Todo.create(description: 'Test todo')
-    assert_difference('Todo.count', -1) do
-      delete todo_url(todo)
+  describe "DELETE #destroy" do
+    it "destroys the requested todo" do
+      todo = Todo.create(description: 'Test todo')
+      expect {
+        delete :destroy, params: { id: todo.id }
+      }.to change(Todo, :count).by(-1)
+      expect(response).to redirect_to(todos_path)
     end
-    assert_redirected_to todos_url
   end
 end
