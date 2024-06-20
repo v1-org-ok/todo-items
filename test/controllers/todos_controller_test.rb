@@ -20,7 +20,7 @@ RSpec.describe TodosController, type: :controller do
 
   describe "DELETE #destroy" do
     it "destroys the requested todo" do
-      todo = Todo.create(description: 'Test todo')
+      todo = Todo.create!(description: 'Test todo')
       expect {
         delete :destroy, params: { id: todo.id }
       }.to change(Todo, :count).by(-1)
