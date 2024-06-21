@@ -6,6 +6,12 @@ RSpec.describe TodosController, type: :controller do
       get :index
       expect(response).to be_successful
     end
+
+    it 'assigns all todos to @todos' do
+      todo = Todo.create!(description: 'Test Todo')
+      get :index
+      expect(assigns(:todos)).to eq([todo])
+    end
   end
 
   describe 'POST #create' do
@@ -19,6 +25,14 @@ RSpec.describe TodosController, type: :controller do
       it 'redirects to the todos list' do
         post :create, params: { todo: { description: 'Test Todo' } }
         expect(response).to redirect_to(todos_path)
+      end
+    end
+
+    context 'with invalid params' do
+      it 'does not create a new Todo' do
+        expect {
+          post :create, params: { todo: { description: '' } }
+        }.not_to change(Todo, :count)
       end
     end
   end
