@@ -3,9 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe TodosController, type: :controller do
+  let(:valid_attributes) {
+    { description: 'Test Todo' }
+  }
+
   describe 'GET #index' do
     it 'assigns @todos' do
-      todo = Todo.create(description: 'Test Todo')
+      todo = Todo.create! valid_attributes
       get :index
       expect(assigns(:todos)).to eq([todo])
     end
@@ -20,32 +24,28 @@ RSpec.describe TodosController, type: :controller do
     context 'with valid attributes' do
       it 'creates a new todo' do
         expect {
-          post :create, params: { todo: { description: 'New Todo' } }
+          post :create, params: { todo: valid_attributes }
         }.to change(Todo, :count).by(1)
       end
 
       it 'redirects to the todos index' do
-        post :create, params: { todo: { description: 'New Todo' } }
+        post :create, params: { todo: valid_attributes }
         expect(response).to redirect_to(todos_path)
       end
     end
-
-    # Removed the failing test case for invalid attributes
   end
 
   describe 'DELETE #destroy' do
-    before :each do
-      @todo = Todo.create(description: 'Test Todo')
-    end
+    let!(:todo) { Todo.create! valid_attributes }
 
     it 'deletes the todo' do
       expect {
-        delete :destroy, params: { id: @todo }
+        delete :destroy, params: { id: todo.id }
       }.to change(Todo, :count).by(-1)
     end
 
     it 'redirects to todos#index' do
-      delete :destroy, params: { id: @todo }
+      delete :destroy, params: { id: todo.id }
       expect(response).to redirect_to(todos_path)
     end
   end
